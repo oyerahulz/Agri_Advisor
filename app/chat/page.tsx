@@ -103,7 +103,14 @@ export default function ChatPage() {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [ttsOn, setTtsOn] = useState(true);
+  // Voice OFF by default; remembers the user's last choice
+  const [ttsOn, setTtsOn] = useState(false);
+
+  useEffect(() => {
+    try {
+      if (window.localStorage.getItem("agri-tts") === "on") setTtsOn(true);
+    } catch {}
+  }, []);
   const [listening, setListening] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
   const recognitionRef = useRef<SpeechRecognition | null>(null);
@@ -219,7 +226,14 @@ export default function ChatPage() {
         </div>
         {/* TTS toggle */}
         <button
-          onClick={() => { setTtsOn(v => !v); if (ttsOn) stopSpeaking(); }}
+          onClick={() => {
+            setTtsOn(v => {
+              const next = !v;
+              try { window.localStorage.setItem("agri-tts", next ? "on" : "off"); } catch {}
+              return next;
+            });
+            if (ttsOn) stopSpeaking();
+          }}
           title={ttsOn ? t("AI आवाज़ बंद करें", "Mute AI voice", lang) : t("AI आवाज़ चालू करें", "Unmute AI voice", lang)}
           className={"flex items-center gap-1.5 text-xs px-2 sm:px-3 py-1.5 rounded-full border-2 font-medium transition-all shrink-0 " + (
             ttsOn
