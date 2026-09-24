@@ -14,6 +14,8 @@
 ![Gemini AI](https://img.shields.io/badge/Google_Gemini-AI-8E75B2?style=flat-square&logo=google&logoColor=white)
 ![Vercel](https://img.shields.io/badge/Deployed_on-Vercel-000000?style=flat-square&logo=vercel&logoColor=white)
 
+<img src="public/screenshot.png" alt="Agri Advisor — home screen showing AI crop advice, weather, mandi prices, disease guide, calendar and 12 farming tools" width="100%"/>
+
 </div>
 
 ---
