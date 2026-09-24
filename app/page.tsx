@@ -162,37 +162,14 @@ export default function Home() {
       </section>
 
       {/* ── About ── */}
-      <section className="max-w-2xl mx-auto pb-6">
-        <details className="group">
-          <summary className="cursor-pointer text-sm font-medium select-none list-none flex items-center gap-1" style={{color:"#5a6e57"}}>
-            <span className="transition-transform group-open:rotate-90 inline-block">▶</span>
-            {t("Agri Advisor के बारे में", "About Agri Advisor", lang)}
-          </summary>
-          <div className="mt-4 space-y-3 text-sm leading-relaxed pl-4 border-l-2" style={{color:"#5a6e57", borderColor:"#bbf7d0"}}>
-            <p>
-              {t(
-                "Agri Advisor एक AI-संचालित डिजिटल कृषि सहायक है जो भारतीय किसानों को सही फसल चुनने, रोग पहचानने, मंडी भाव जानने और सरकारी योजनाओं का लाभ उठाने में मदद करता है।",
-                "Agri Advisor is an AI-powered digital farming assistant that helps Indian farmers choose the right crops, identify plant diseases, check mandi prices, and access government schemes.",
-                lang
-              )}
-            </p>
-            <p>
-              <span className="font-semibold" style={{color:"#1a6b3a"}}>🎯 {t("लक्ष्य","Mission",lang)}:</span>{" "}
-              {t("हर किसान तक सही जानकारी — भाषा और तकनीक की बाधा के बिना।","Right information for every farmer — without language or tech barriers.",lang)}
-            </p>
-            <p>
-              <span className="font-semibold" style={{color:"#1a6b3a"}}>🛠️ {t("तकनीक","Tech",lang)}:</span>{" "}
-              Next.js · Gemini AI · Open-Meteo API · ML crop model
-            </p>
-            <p>
-              <span className="font-semibold" style={{color:"#1a6b3a"}}>🌍 {t("कवरेज","Coverage",lang)}:</span>{" "}
-              {t("भारत के सभी राज्य · हिंदी और अंग्रेज़ी · 2G पर भी चले","All Indian states · Hindi & English · Works on 2G",lang)}
-            </p>
-            <p className="text-xs pt-1" style={{color:"#9ca3af"}}>
-              © 2026 Agri Advisor · {t("किसानों के लिए, किसानों द्वारा","For farmers, by farmers",lang)} 🌱
-            </p>
-          </div>
-        </details>
+      <section className="max-w-2xl mx-auto pb-6 text-center">
+        <Link
+          href="/about"
+          className="inline-flex items-center gap-2 text-sm font-semibold px-5 py-2.5 rounded-full border border-green-200 bg-white/70 hover:bg-green-50 transition-colors"
+          style={{color:"#1a6b3a"}}
+        >
+          ℹ️ {t("Agri Advisor के बारे में", "About Agri Advisor", lang)}
+        </Link>
       </section>
 
     </div>

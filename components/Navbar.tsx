@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { useLang, LANGUAGES, type Lang } from "@/lib/lang";
+import Logo from "./Logo";
 
 export default function Navbar() {
   const { lang, setLang } = useLang();
@@ -22,7 +23,7 @@ export default function Navbar() {
     <nav className="navbar sticky top-0 z-50">
       <div className="max-w-6xl mx-auto px-4 flex items-center justify-between h-14">
         <Link href="/" className="navbar-logo flex items-center gap-2 text-xl">
-          🚜 {lang === "hi" ? "एग्री एडवाइजर" : "Agri Advisor"}
+          <Logo size={30} /> {lang === "hi" ? "एग्री एडवाइजर" : "Agri Advisor"}
         </Link>
         <div className="relative" ref={ref}>
           <button

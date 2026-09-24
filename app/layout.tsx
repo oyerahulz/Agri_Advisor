@@ -4,8 +4,12 @@ import Navbar from "@/components/Navbar";
 import { LangProvider } from "@/lib/lang";
 
 export const metadata: Metadata = {
-  title: "Agri Advisor",
-  description: "AI-powered agricultural advisor for Indian farmers",
+  title: "Agri Advisor — AI Farming Assistant for Indian Farmers",
+  description:
+    "AI-powered agricultural advisor for Indian farmers: crop advice, disease detection, mandi prices, weather, fertilizer guidance and government schemes. Free, in 5 Indian languages.",
+  applicationName: "Agri Advisor",
+  authors: [{ name: "Rahul Kumar", url: "mailto:rahulkumarindia200@gmail.com" }],
+  keywords: ["agriculture", "farming", "kisan", "crop advice", "mandi price", "plant disease", "India"],
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -28,6 +32,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               </a>{" "}
               · ✉ rahulkumarindia200@gmail.com
             </span>
+            <br />
+            <a href="/about" className="underline decoration-dotted underline-offset-2 opacity-80 hover:opacity-100">
+              About · हमारे बारे में
+            </a>
           </footer>
         </LangProvider>
       </body>

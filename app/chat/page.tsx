@@ -4,6 +4,7 @@ import { useLang, t, localeFor, type Lang } from "@/lib/lang";
 import BackButton from "@/components/BackButton";
 
 import { GEMINI_KEY, GEMINI_URL } from "@/lib/config";
+import { getMockChatReply } from "@/lib/mock-ai";
 
 interface Message { role: "user" | "bot"; text: string; imageUrl?: string; }
 
@@ -56,6 +57,9 @@ async function askGemini(
     contents,
     generationConfig: { temperature: 0.7, maxOutputTokens: 5000 }
   };
+  // Demo mode — no API key configured: answer locally
+  if (!GEMINI_KEY) return getMockChatReply(question, lang);
+
   const res = await fetch(GEMINI_URL, {
     method: "POST",
     headers: { "Content-Type": "application/json", "X-goog-api-key": GEMINI_KEY },
@@ -185,12 +189,12 @@ export default function ChatPage() {
       setMessages(prev => [...prev, { role: "bot", text: reply }]);
       speak(reply);
     } catch (e) {
+      // API unreachable/quota — fall back to the offline demo answer
       const msg = e instanceof Error ? e.message : String(e);
       setError(msg);
-      const errText = lang === "hi"
-        ? "\u26a0\ufe0f AI \u0938\u0947 \u091c\u0941\u0921\u093c\u0928\u0947 \u092e\u0947\u0902 \u0938\u092e\u0938\u094d\u092f\u093e \u0939\u0941\u0908\u0964 \u0915\u0943\u092a\u092f\u093e \u0926\u094b\u092c\u093e\u0930\u093e \u0915\u094b\u0936\u093f\u0936 \u0915\u0930\u0947\u0902\u0964"
-        : "\u26a0\ufe0f Could not connect to AI. Please try again.";
-      setMessages(prev => [...prev, { role: "bot", text: errText }]);
+      const fallback = getMockChatReply(userMsg.text, lang, true);
+      setMessages(prev => [...prev, { role: "bot", text: fallback }]);
+      speak(fallback);
     }
     setLoading(false);
   }
@@ -371,7 +375,9 @@ export default function ChatPage() {
         </form>
 
         <p className="text-center text-xs text-gray-400 mt-2">
-          Agri Advisor AI — Powered by Gemini Flash · {t("नि:शुल्क", "Free", lang)}
+          {GEMINI_KEY
+            ? `Agri Advisor AI — Powered by Gemini Flash · ${t("नि:शुल्क", "Free", lang)}`
+            : t("डेमो मोड — सामान्य सलाह · AI कुंजी जोड़ने पर लाइव उत्तर", "Demo mode — general guidance · add AI key for live answers", lang)}
         </p>
       </div>
     </div>

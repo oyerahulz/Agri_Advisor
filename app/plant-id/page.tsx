@@ -4,6 +4,7 @@ import { useLang, t, type Lang } from "@/lib/lang";
 import BackButton from "@/components/BackButton";
 
 import { GEMINI_KEY, GEMINI_URL } from "@/lib/config";
+import { getMockDiagnosis } from "@/lib/mock-ai";
 
 interface DiseaseResult {
   name: string;
@@ -336,7 +337,13 @@ export default function PlantIDPage() {
     setError("");
     try {
       const { base64, mimeType } = await fileToBase64(file);
-      const res = await analyzeWithGemini(base64, mimeType, lang, userNote);
+      let res: DiseaseResult[];
+      if (!GEMINI_KEY) {
+        // Demo mode — no API key: show offline mock diagnosis
+        res = getMockDiagnosis(lang);
+      } else {
+        res = await analyzeWithGemini(base64, mimeType, lang, userNote);
+      }
       setResults(res);
       setDone(true);
     } catch (e) {
