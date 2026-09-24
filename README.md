@@ -6,6 +6,7 @@
 
 [![Live Demo](https://img.shields.io/badge/🌐_Live_Demo-agri--advisor--two.vercel.app-16a34a?style=for-the-badge)](https://agri-advisor-two.vercel.app)
 [![Developer](https://img.shields.io/badge/👨‍💻_Developer-Rahul_Kumar-blue?style=for-the-badge)](mailto:rahulkumarindia200@gmail.com)
+[![License: MIT](https://img.shields.io/badge/📜_License-MIT-yellow?style=for-the-badge)](LICENSE)
 
 ![Next.js](https://img.shields.io/badge/Next.js_16-black?style=flat-square&logo=next.js)
 ![React](https://img.shields.io/badge/React_19-61DAFB?style=flat-square&logo=react&logoColor=black)
@@ -69,6 +70,8 @@ Open http://localhost:3000 — get a free Gemini key at [Google AI Studio](https
 - ML crop recommendation model · Deployed on **Vercel**
 
 ## 📄 License & Author
+
+Released under the [MIT License](LICENSE) — free to use, modify and build upon with attribution.
 
 **Rahul Kumar** · [rahulkumarindia200@gmail.com](mailto:rahulkumarindia200@gmail.com) · [GitHub](https://github.com/oyerahulz)
 
