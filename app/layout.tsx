@@ -36,6 +36,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <a href="/about" className="underline decoration-dotted underline-offset-2 opacity-80 hover:opacity-100">
               About · हमारे बारे में
             </a>
+            <span aria-hidden="true"> · </span>
+            <a
+              href="https://github.com/oyerahulz/Agri_Advisor"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline decoration-dotted underline-offset-2 opacity-80 hover:opacity-100"
+            >
+              GitHub
+            </a>
           </footer>
         </LangProvider>
       </body>
