@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { useLang, t } from "@/lib/lang";
+import { useLang, t, type Lang } from "@/lib/lang";
 import BackButton from "@/components/BackButton";
 import { SOIL_TYPES, CROP_TYPES, recommendFertilizer } from "@/lib/fertilizer";
 import {
@@ -102,7 +102,7 @@ function computeAdvisory(form: FormData): Advisory {
   };
 }
 
-function formatModelReason(advisory: Advisory, lang: "hi" | "en") {
+function formatModelReason(advisory: Advisory, lang: Lang) {
   const parts = [
     advisory.npk.n > 10 ? t(`नाइट्रोजन ${advisory.npk.n} किलो/एकड़`, `nitrogen ${advisory.npk.n} kg/acre`, lang) : "",
     advisory.npk.p > 10 ? t(`फास्फोरस ${advisory.npk.p} किलो/एकड़`, `phosphorus ${advisory.npk.p} kg/acre`, lang) : "",

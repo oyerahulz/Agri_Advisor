@@ -3,7 +3,7 @@ import { useState } from "react";
 import { MANDI_PRICES, MandiPrice } from "@/lib/mandi";
 import { useLang, t } from "@/lib/lang";
 import BackButton from "@/components/BackButton";
-import { formatStateName } from "@/lib/i18n-data";
+import { formatStateName, formatCropCategory } from "@/lib/i18n-data";
 
 const CATS_EN = ["All","Cereal","Oilseed","Pulse","Cash","Vegetable","Fruit","Spice"];
 const CATS_HI = ["सभी","अनाज","तिलहन","दलहन","नकदी","सब्जी","फल","मसाला"];
@@ -90,7 +90,7 @@ export default function MandiPage() {
   const [liveDate, setLiveDate] = useState("");
   const [liveNote, setLiveNote] = useState("");
 
-  const cats    = lang === "hi" ? CATS_HI : CATS_EN;
+  const cats    = CATS_EN.map(c => c === "All" ? t("सभी", "All", lang) : formatCropCategory(c, lang));
   const catKeys = CATS_EN; // always use EN keys for filtering
   const base    = liveData ?? [...MANDI_PRICES, ...extra];
 
@@ -223,7 +223,7 @@ export default function MandiPage() {
               <button key={s} type="button"
                 onClick={() => setLiveQuery(s)}
                 className="text-xs px-2.5 py-1 bg-white border border-green-200 text-green-700 rounded-full hover:bg-green-50 transition-colors">
-                {s}
+                {t(s, s, lang)}
               </button>
             ))}
           </div>

@@ -1,8 +1,13 @@
 import type { Lang } from "./lang";
+import { UI_TRANSLATIONS } from "./translations";
 
 type Label = { hi: string; en: string };
 
-const pick = (label: Label, lang: Lang) => lang === "hi" ? label.hi : label.en;
+const pick = (label: Label, lang: Lang) => {
+  if (lang === "hi") return label.hi;
+  if (lang === "en") return label.en;
+  return UI_TRANSLATIONS[lang]?.[label.en] ?? label.en;
+};
 
 export const CROP_CATEGORY_LABELS: Record<string, Label> = {
   cereal: { hi: "अनाज", en: "Cereal" },

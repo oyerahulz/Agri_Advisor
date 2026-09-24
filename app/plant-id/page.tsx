@@ -1,6 +1,6 @@
 "use client";
 import { useState, useRef } from "react";
-import { useLang, t } from "@/lib/lang";
+import { useLang, t, type Lang } from "@/lib/lang";
 import BackButton from "@/components/BackButton";
 
 import { GEMINI_KEY, GEMINI_URL } from "@/lib/config";
@@ -23,12 +23,14 @@ const CONFIDENCE_VALUES = ["High", "Medium", "Low"];
 async function analyzeWithGemini(
   base64: string,
   mimeType: string,
-  lang: "hi" | "en",
+  lang: Lang,
   userNote: string
 ): Promise<DiseaseResult[]> {
-  const langNote = lang === "hi"
-    ? "Respond entirely in Hindi using Devanagari script."
-    : "Respond entirely in English.";
+  const langNames: Record<Lang, string> = {
+    hi: "Hindi using Devanagari script", en: "English", mr: "Marathi using Devanagari script",
+    ta: "Tamil using Tamil script", te: "Telugu using Telugu script",
+  };
+  const langNote = `Respond entirely in ${langNames[lang]}.`;
 
   const extraNote = userNote.trim()
     ? `The user has provided this additional instruction or question: ${userNote.trim()}`
@@ -134,7 +136,7 @@ function extractJsonString(text: string, key: keyof DiseaseResult) {
   }
 }
 
-function normalizeDiagnoses(items: RawDiagnosis[], lang: "hi" | "en"): DiseaseResult[] {
+function normalizeDiagnoses(items: RawDiagnosis[], lang: Lang): DiseaseResult[] {
   const normalized = items
     .slice(0, 3)
     .map(item => normalizeDiagnosis(item, lang))
@@ -143,7 +145,7 @@ function normalizeDiagnoses(items: RawDiagnosis[], lang: "hi" | "en"): DiseaseRe
   return normalized.length > 0 ? normalized : [normalizeDiagnosis({}, lang)];
 }
 
-function normalizeDiagnosis(item: RawDiagnosis, lang: "hi" | "en"): DiseaseResult {
+function normalizeDiagnosis(item: RawDiagnosis, lang: Lang): DiseaseResult {
   const type = normalizeType(asText(item.type));
   const confidence = normalizeConfidence(asText(item.confidence));
   const name = cleanText(asText(item.name)) || defaultName(type, lang);
@@ -194,11 +196,11 @@ function normalizeConfidence(value: string) {
   return CONFIDENCE_VALUES.find(level => lower.includes(level.toLowerCase())) ?? "Low";
 }
 
-function tFallback(hi: string, en: string, lang: "hi" | "en") {
-  return lang === "hi" ? hi : en;
+function tFallback(hi: string, en: string, lang: Lang) {
+  return t(hi, en, lang);
 }
 
-function defaultName(type: string, lang: "hi" | "en") {
+function defaultName(type: string, lang: Lang) {
   const names: Record<string, { hi: string; en: string }> = {
     fungal: { hi: "संभावित फफूंद रोग", en: "Likely fungal disease" },
     pest: { hi: "संभावित कीट प्रकोप", en: "Likely pest attack" },
@@ -210,7 +212,7 @@ function defaultName(type: string, lang: "hi" | "en") {
   return tFallback(names[type]?.hi ?? names.fungal.hi, names[type]?.en ?? names.fungal.en, lang);
 }
 
-function defaultSymptoms(name: string, crop: string, type: string, lang: "hi" | "en") {
+function defaultSymptoms(name: string, crop: string, type: string, lang: Lang) {
   if (lang === "hi") {
     if (type === "healthy") return "फोटो में पौधा सामान्य रूप से स्वस्थ दिखता है। पत्तियों पर बड़े धब्बे, सड़न या कीट का भारी प्रकोप स्पष्ट नहीं दिख रहा है। फिर भी खेत में नए धब्बों, पीलापन या मुरझाने पर निगरानी रखें।";
     return `${crop} में ${name} की संभावना दिखती है। प्रभावित पत्तियों पर धब्बे, पीलापन, सूखापन या जले हुए किनारे दिख सकते हैं। रोग बढ़ने पर धब्बे फैलते हैं और पत्ती की हरी सतह कम हो जाती है। नमी और लगातार पत्ती गीली रहने से समस्या तेजी से बढ़ सकती है।`;
@@ -219,7 +221,7 @@ function defaultSymptoms(name: string, crop: string, type: string, lang: "hi" | 
   return `${name} is the most likely issue on ${crop}. Affected leaves may show spots, yellowing, drying, burnt edges, or damaged tissue. As the problem advances, spots can spread and reduce the green leaf area. High humidity and wet leaves can make the issue spread faster.`;
 }
 
-function defaultPrevention(type: string, lang: "hi" | "en") {
+function defaultPrevention(type: string, lang: Lang) {
   if (lang === "hi") {
     if (type === "healthy") return "स्वस्थ पौधों को बचाने के लिए खेत में नियमित निगरानी करें। पत्तियों को लंबे समय तक गीला न रहने दें और जरूरत के अनुसार सिंचाई करें। खेत में हवा का अच्छा आवागमन रखें और खरपतवार हटाते रहें। रोगग्रस्त पौधे मिलने पर उन्हें अलग करें और औजार साफ रखें।";
     return "रोगग्रस्त पत्तियों को तोड़कर खेत से बाहर नष्ट करें ताकि संक्रमण न फैले। ऊपर से सिंचाई करने से बचें और सुबह के समय सिंचाई करें ताकि पत्तियां जल्दी सूखें। पौधों के बीच उचित दूरी रखें और खेत में हवा का आवागमन बनाए रखें। फसल चक्र अपनाएं और टमाटर, मिर्च, आलू जैसी संबंधित फसलें उसी जगह लगातार न लगाएं। खेत की सफाई रखें और नाइट्रोजन की अधिक मात्रा से बचें।";
@@ -228,7 +230,7 @@ function defaultPrevention(type: string, lang: "hi" | "en") {
   return "Remove badly affected leaves and destroy them away from the field to reduce spread. Avoid overhead irrigation and water early in the day so foliage dries quickly. Maintain proper spacing and airflow between plants. Rotate crops and avoid planting related crops such as tomato, chilli, and potato repeatedly in the same plot. Keep the field clean and avoid excessive nitrogen fertilizer.";
 }
 
-function defaultTreatment(type: string, lang: "hi" | "en") {
+function defaultTreatment(type: string, lang: Lang) {
   if (lang === "hi") {
     if (type === "pest") return "पहले प्रभावित पत्तियों और कीटों को हाथ से हटाएं। हल्के प्रकोप में नीम तेल 3 से 5 मिली प्रति लीटर पानी में मिलाकर शाम को छिड़कें। प्रकोप अधिक हो तो स्थानीय कृषि अधिकारी की सलाह से उपयुक्त कीटनाशक का उपयोग करें। दवा के लेबल पर लिखी मात्रा, प्रतीक्षा अवधि और सुरक्षा निर्देशों का पालन करें। छिड़काव करते समय दस्ताने, मास्क और पूरी बांह के कपड़े पहनें।";
     if (type === "nutritional") return "मिट्टी की जांच कराएं और कमी के अनुसार संतुलित खाद दें। तुरंत राहत के लिए सूक्ष्म पोषक तत्वों का फोलियर स्प्रे कृषि विशेषज्ञ की सलाह से करें। जैविक पदार्थ बढ़ाने के लिए कम्पोस्ट या अच्छी सड़ी गोबर खाद डालें। अधिक खाद एक साथ न डालें क्योंकि इससे जड़ों को नुकसान हो सकता है।";

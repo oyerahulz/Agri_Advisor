@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { useLang, t } from "@/lib/lang";
+import { useLang, t, type Lang } from "@/lib/lang";
 import BackButton from "@/components/BackButton";
 
 // Using Open-Meteo geocoding (free, no key, no CORS issues)
@@ -104,7 +104,7 @@ async function fetchWeather(lat: number, lon: number): Promise<{ current: Curren
   return { current, forecast };
 }
 
-function farmingTips(forecast: DayForecast[], lang: "hi" | "en"): string[] {
+function farmingTips(forecast: DayForecast[], lang: Lang): string[] {
   const tips: string[] = [];
   const rainyDays = forecast.filter(d => d.rain > 50).map(d => lang === "hi" ? d.dayHi : d.dayEn);
   const hotDays = forecast.filter(d => d.hi > 38);

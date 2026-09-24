@@ -33,7 +33,16 @@ const features = [
   { emoji:"📱", hi:"मोबाइल फर्स्ट",  en:"Mobile First",       descHi:"धीमे इंटरनेट पर भी तेज़ और आसान।",              descEn:"Fast and easy even on slow internet." },
 ];
 
-const crops = ["🌾 धान","🌿 गेहूँ","🌽 मक्का","🤍 कपास","🍬 गन्ना","🫘 सोयाबीन","🥜 मूँगफली","🥭 आम"];
+const HERO_CROPS = [
+  { emoji:"🌾", hi:"धान",     en:"Rice" },
+  { emoji:"🌿", hi:"गेहूँ",   en:"Wheat" },
+  { emoji:"🌽", hi:"मक्का",   en:"Maize" },
+  { emoji:"🤍", hi:"कपास",   en:"Cotton" },
+  { emoji:"🍬", hi:"गन्ना",   en:"Sugarcane" },
+  { emoji:"🫘", hi:"सोयाबीन", en:"Soybean" },
+  { emoji:"🥜", hi:"मूँगफली", en:"Groundnut" },
+  { emoji:"🥭", hi:"आम",     en:"Mango" },
+];
 
 export default function Home() {
   const { lang } = useLang();
@@ -71,7 +80,11 @@ export default function Home() {
           </Link>
         </div>
         <div className="flex flex-wrap gap-2 justify-center">
-          {crops.map(c => <span key={c} className="crop-pill">{c}</span>)}
+          {HERO_CROPS.map(c => (
+            <span key={c.en} className="crop-pill">
+              {c.emoji} {t(c.hi, c.en, lang)}
+            </span>
+          ))}
         </div>
       </section>
 

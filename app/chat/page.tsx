@@ -1,6 +1,6 @@
 "use client";
 import { useState, useRef, useEffect, useCallback } from "react";
-import { useLang, t } from "@/lib/lang";
+import { useLang, t, localeFor, type Lang } from "@/lib/lang";
 import BackButton from "@/components/BackButton";
 
 import { GEMINI_KEY, GEMINI_URL } from "@/lib/config";
@@ -31,11 +31,15 @@ Rules:
 async function askGemini(
   question: string,
   history: Message[],
-  lang: "hi" | "en",
+  lang: Lang,
   imageBase64?: string,
   imageMime?: string
 ): Promise<string> {
-  const langInstruction = lang === "hi" ? "Respond in Hindi (Devanagari script)." : "Respond in English.";
+  const langNames: Record<Lang, string> = {
+    hi: "Hindi (Devanagari script)", en: "English", mr: "Marathi (Devanagari script)",
+    ta: "Tamil (Tamil script)", te: "Telugu (Telugu script)",
+  };
+  const langInstruction = `Respond in ${langNames[lang]}.`;
 
   // Build the last user parts — text + optional image
   const userParts: object[] = [{ text: `${langInstruction}\n\n${question}` }];
@@ -109,7 +113,7 @@ export default function ChatPage() {
     if (!ttsOn || typeof window === "undefined" || !window.speechSynthesis) return;
     window.speechSynthesis.cancel();
     const utt = new SpeechSynthesisUtterance(text);
-    utt.lang = lang === "hi" ? "hi-IN" : "en-IN";
+    utt.lang = localeFor(lang);
     utt.rate = 0.9;
     window.speechSynthesis.speak(utt);
   }
@@ -146,7 +150,7 @@ export default function ChatPage() {
       return;
     }
     const rec = new SR();
-    rec.lang = lang === "hi" ? "hi-IN" : "en-IN";
+    rec.lang = localeFor(lang);
     rec.interimResults = false;
     rec.maxAlternatives = 1;
     rec.onstart = () => setListening(true);
@@ -193,16 +197,18 @@ export default function ChatPage() {
 
   function handleSubmit(e: React.FormEvent) { e.preventDefault(); send(input); }
 
-  const quickQuestions = lang === "hi" ? QUICK_HI : QUICK_EN;
+  const quickQuestions = lang === "hi"
+    ? QUICK_HI
+    : QUICK_EN.map(q => t(q, q, lang));
   const isEmpty = messages.length === 0;
 
   return (
     <div className="flex flex-col h-[calc(100vh-120px)] max-w-2xl mx-auto">
 
       {/* Header */}
-      <div className="flex items-center gap-3 pb-4 border-b border-gray-100">
+      <div className="flex items-center gap-2 sm:gap-3 pb-4 border-b border-gray-100">
         <BackButton />
-        <div className="w-10 h-10 bg-green-600 rounded-2xl flex items-center justify-center text-white text-xl shadow shrink-0">🌾</div>
+        <div className="w-10 h-10 bg-green-600 rounded-2xl flex items-center justify-center text-white text-xl shadow shrink-0 hidden sm:flex">🌾</div>
         <div className="flex-1 min-w-0">
           <div className="font-bold text-gray-800">{t("एग्री एडवाइजर AI", "Agri Advisor AI", lang)}</div>
           <div className="text-xs text-gray-400">{t("कोई भी खेती सवाल पूछें", "Ask any farming question", lang)}</div>
@@ -211,7 +217,7 @@ export default function ChatPage() {
         <button
           onClick={() => { setTtsOn(v => !v); if (ttsOn) stopSpeaking(); }}
           title={ttsOn ? t("AI आवाज़ बंद करें", "Mute AI voice", lang) : t("AI आवाज़ चालू करें", "Unmute AI voice", lang)}
-          className={"flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-full border-2 font-medium transition-all " + (
+          className={"flex items-center gap-1.5 text-xs px-2 sm:px-3 py-1.5 rounded-full border-2 font-medium transition-all shrink-0 " + (
             ttsOn
               ? "border-green-400 text-green-700 bg-green-50"
               : "border-gray-300 text-gray-400 bg-white"
