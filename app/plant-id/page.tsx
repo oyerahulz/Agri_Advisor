@@ -347,10 +347,18 @@ export default function PlantIDPage() {
       setResults(res);
       setDone(true);
     } catch (e) {
+      // API failure/invalid key — show the offline mock diagnosis instead of a dead end
       const msg = e instanceof Error ? e.message : String(e);
+      const keyNote = msg.includes("API_KEY_INVALID")
+        ? (lang === "hi"
+          ? "AI कुंजी अमान्य है — .env.local में सही NEXT_PUBLIC_GEMINI_KEY डालें। "
+          : "The AI key is invalid — set a valid NEXT_PUBLIC_GEMINI_KEY in .env.local. ")
+        : "";
       setError(lang === "hi"
-        ? `\u26a0\ufe0f \u0935\u093f\u0936\u094d\u0932\u0947\u0937\u0923 \u092e\u0947\u0902 \u0924\u094d\u0930\u0941\u091f\u093f: ${msg}`
-        : `\u26a0\ufe0f Analysis failed: ${msg}`);
+        ? `\u26a0\ufe0f \u0932\u093e\u0907\u0935 AI \u0935\u093f\u0936\u094d\u0932\u0947\u0937\u0923 \u0909\u092a\u0932\u092c\u094d\u0927 \u0928\u0939\u0940\u0902\u0924\u0964 ${keyNote}\u0928\u0940\u091a\u0947 \u0938\u093e\u092e\u093e\u0928\u094d\u092f \u0921\u0947\u092e\u094b \u0928\u093f\u0926\u093e\u0928 \u0926\u093f\u092f\u093e \u0917\u092f\u093e \u0939\u0948\u0964`
+        : `\u26a0\ufe0f Live AI analysis unavailable. ${keyNote}Showing a general demo diagnosis below.`);
+      setResults(getMockDiagnosis(lang));
+      setDone(true);
     }
     setLoading(false);
   }

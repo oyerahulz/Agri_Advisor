@@ -70,7 +70,7 @@ function scorecrops(season: string, rainfall: string, temp: number, soil: string
       if (sSoil.includes("black") && cSoil.includes("black")) score += 15;
       if (sSoil.includes("red") && cSoil.includes("red")) score += 15;
       if (sSoil.includes("alluvial") && cSoil.includes("alluvial")) score += 10;
-      return { ...c, score };
+      return { ...c, score: Math.min(score, 99) };
     })
     .sort((a, b) => b.score - a.score)
     .slice(0, 5);

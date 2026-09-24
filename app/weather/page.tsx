@@ -35,17 +35,40 @@ const WMO_MAP: Record<number, { desc: string; descHi: string; emoji: string }> =
   45: { desc:"Foggy",           descHi:"कोहरा",           emoji:"🌫️" },
   48: { desc:"Icy fog",         descHi:"बर्फीला कोहरा",   emoji:"🌫️" },
   51: { desc:"Light drizzle",   descHi:"हल्की बूंदाबांदी",emoji:"🌦️" },
+  53: { desc:"Drizzle",         descHi:"बूंदाबांदी",      emoji:"🌦️" },
+  55: { desc:"Heavy drizzle",   descHi:"तेज़ बूंदाबांदी", emoji:"🌦️" },
+  56: { desc:"Freezing drizzle",descHi:"ठंडी बूंदाबांदी", emoji:"🌧️" },
+  57: { desc:"Freezing drizzle",descHi:"ठंडी बूंदाबांदी", emoji:"🌧️" },
   61: { desc:"Light rain",      descHi:"हल्की बारिश",     emoji:"🌦️" },
   63: { desc:"Moderate rain",   descHi:"मध्यम बारिश",     emoji:"🌧️" },
   65: { desc:"Heavy rain",      descHi:"भारी बारिश",      emoji:"🌧️" },
+  66: { desc:"Freezing rain",   descHi:"ठंडी बारिश",      emoji:"🌧️" },
+  67: { desc:"Freezing rain",   descHi:"ठंडी बारिश",      emoji:"🌧️" },
   71: { desc:"Light snow",      descHi:"हल्की बर्फ",      emoji:"🌨️" },
-  80: { desc:"Rain showers",    descHi:"बारिश के झोंके",  emoji:"🌦️" },
+  73: { desc:"Snow",            descHi:"बर्फ",           emoji:"🌨️" },
+  75: { desc:"Heavy snow",      descHi:"भारी बर्फ",      emoji:"❄️" },
+  77: { desc:"Snow grains",     descHi:"बर्फ के कण",      emoji:"🌨️" },
+  80: { desc:"Light showers",   descHi:"हल्की बौछारें",   emoji:"🌦️" },
+  81: { desc:"Rain showers",    descHi:"बारिश के झोंके",  emoji:"🌦️" },
+  82: { desc:"Heavy showers",   descHi:"तेज़ बौछारें",    emoji:"🌧️" },
+  85: { desc:"Snow showers",    descHi:"बर्फ की बौछारें", emoji:"🌨️" },
+  86: { desc:"Snow showers",    descHi:"बर्फ की बौछारें", emoji:"🌨️" },
   95: { desc:"Thunderstorm",    descHi:"आंधी-तूफ़ान",     emoji:"⛈️" },
+  96: { desc:"Thunderstorm + hail",descHi:"आंधी व ओले",   emoji:"⛈️" },
   99: { desc:"Heavy thunderstorm",descHi:"भारी तूफ़ान",   emoji:"⛈️" },
 };
 
 function wmo(code: number) {
-  return WMO_MAP[code] ?? { desc:"Unknown", descHi:"अज्ञात", emoji:"🌡️" };
+  if (WMO_MAP[code]) return WMO_MAP[code];
+  // Range fallback so no WMO code ever shows "Unknown"
+  if (code <= 3) return { desc:"Partly cloudy", descHi:"आंशिक बादल", emoji:"⛅" };
+  if (code <= 48) return { desc:"Foggy", descHi:"कोहरा", emoji:"🌫️" };
+  if (code <= 57) return { desc:"Drizzle", descHi:"बूंदाबांदी", emoji:"🌦️" };
+  if (code <= 67) return { desc:"Rain", descHi:"बारिश", emoji:"🌧️" };
+  if (code <= 77) return { desc:"Snow", descHi:"बर्फ", emoji:"🌨️" };
+  if (code <= 82) return { desc:"Rain showers", descHi:"बारिश के झोंके", emoji:"🌦️" };
+  if (code <= 86) return { desc:"Snow showers", descHi:"बर्फ की बौछारें", emoji:"🌨️" };
+  return { desc:"Thunderstorm", descHi:"आंधी-तूफ़ान", emoji:"⛈️" };
 }
 
 const DAYS_HI = ["रवि","सोम","मंगल","बुध","गुरु","शुक्र","शनि"];

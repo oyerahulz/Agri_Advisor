@@ -41,6 +41,7 @@ async function askGemini(
     ta: "Tamil (Tamil script)", te: "Telugu (Telugu script)",
   };
   const langInstruction = `Respond in ${langNames[lang]}.`;
+  let keyInvalid = false;
 
   // Build the last user parts — text + optional image
   const userParts: object[] = [{ text: `${langInstruction}\n\n${question}` }];
@@ -65,7 +66,11 @@ async function askGemini(
     headers: { "Content-Type": "application/json", "X-goog-api-key": GEMINI_KEY },
     body: JSON.stringify(body),
   });
-  if (!res.ok) { const err = await res.text(); throw new Error(`Gemini error: ${res.status} — ${err}`); }
+  if (!res.ok) {
+    const err = await res.text();
+    if (res.status === 400 && err.includes("API_KEY_INVALID")) keyInvalid = true;
+    throw new Error(keyInvalid ? "API_KEY_INVALID" : `Gemini error: ${res.status} — ${err}`);
+  }
   const data = await res.json();
   const raw = data.candidates?.[0]?.content?.parts?.[0]?.text ?? (lang === "hi" ? "माफ़ करें, कोई उत्तर नहीं मिला।" : "Sorry, no response received.");
   // Strip markdown symbols
@@ -196,10 +201,16 @@ export default function ChatPage() {
       setMessages(prev => [...prev, { role: "bot", text: reply }]);
       speak(reply);
     } catch (e) {
-      // API unreachable/quota — fall back to the offline demo answer
+      // API unreachable/invalid key/quota — fall back to the offline demo answer
       const msg = e instanceof Error ? e.message : String(e);
       setError(msg);
-      const fallback = getMockChatReply(userMsg.text, lang, true);
+      const offline = msg !== "API_KEY_INVALID";
+      const intro = msg === "API_KEY_INVALID"
+        ? (lang === "hi"
+          ? "⚠️ AI कुंजी अमान्य है — कृपया .env.local में सही NEXT_PUBLIC_GEMINI_KEY डालें। तब तक डेमो उत्तर:\n"
+          : "⚠️ The AI key is invalid — please set a valid NEXT_PUBLIC_GEMINI_KEY in .env.local. Meanwhile, here's a demo answer:\n")
+        : "";
+      const fallback = intro + getMockChatReply(userMsg.text, lang, offline);
       setMessages(prev => [...prev, { role: "bot", text: fallback }]);
       speak(fallback);
     }
