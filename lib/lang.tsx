@@ -1,13 +1,29 @@
 "use client";
-import { createContext, useContext, useState, ReactNode } from "react";
+import { createContext, useContext, useEffect, useState, ReactNode } from "react";
 
 export type Lang = "hi" | "en";
-const LangContext = createContext<{ lang: Lang; toggle: () => void }>({ lang: "hi", toggle: () => {} });
+const LangContext = createContext<{ lang: Lang; toggle: () => void }>({ lang: "en", toggle: () => {} });
 
 export function LangProvider({ children }: { children: ReactNode }) {
-  const [lang, setLang] = useState<Lang>("hi");
+  // Default language: English (restores a saved choice if present)
+  const [lang, setLang] = useState<Lang>("en");
+
+  useEffect(() => {
+    try {
+      const saved = window.localStorage.getItem("agri-lang");
+      if (saved === "hi" || saved === "en") setLang(saved);
+    } catch {}
+  }, []);
+
+  const toggle = () =>
+    setLang(l => {
+      const next: Lang = l === "hi" ? "en" : "hi";
+      try { window.localStorage.setItem("agri-lang", next); } catch {}
+      return next;
+    });
+
   return (
-    <LangContext.Provider value={{ lang, toggle: () => setLang(l => l === "hi" ? "en" : "hi") }}>
+    <LangContext.Provider value={{ lang, toggle }}>
       {children}
     </LangContext.Provider>
   );
